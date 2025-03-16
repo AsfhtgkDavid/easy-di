@@ -1,0 +1,36 @@
+[project]
+name = "easy-di"
+version = "1.0.0"
+description = "Easy library for dependency injection"
+requires-python = ">=3.9"
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "coverage>=7.6.12",
+    "isort>=6.0.1",
+    "mypy>=1.15.0",
+    "ruff>=0.9.10",
+]
+
+[tool.ruff]
+line-length = 79
+target-version = "py39"
+indent-width = 4
+
+[tool.ruff.lint]
+fixable = ["ALL"]
+select = [
+    "ALL",
+]
+ignore = [
+    "ANN401",
+    "EM101",
+    "I",
+    "COM812",
+    "TRY003",
+    "UP007"
+]
+
+[tool.mypy]
+strict = true
