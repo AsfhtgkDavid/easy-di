@@ -28,8 +28,9 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Run Tests
         run: |
-          uv sync --no-dev
+          uv venv
           source .venv/Scripts/activate
+          uv sync --no-dev
           python -m unittest discover -s tests -p '*_test.py'
 
   mypy-static-tests:
