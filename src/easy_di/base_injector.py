@@ -1,3 +1,11 @@
+"""
+A simple dependency injector
+
+Copyright (c) 2025 David Lishchyshen
+
+See the README file for information on usage and redistribution.
+"""
+
 import functools
 from typing import Any, Callable, ClassVar, Concatenate, ParamSpec, TypeVar
 
