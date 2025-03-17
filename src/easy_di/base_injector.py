@@ -9,14 +9,15 @@ T = TypeVar("T")
 
 
 class BaseInjector:
-    """
-    A simple dependency injector that allows registering and injecting dependencies
+    """A simple dependency injector
+
+    Allows registering and injecting dependencies
     dynamically into functions using decorators.
     """
+
     _registered_dependencies: ClassVar[dict[str, Any]] = {}
     def __init__(self, *dependencies: str) -> None:
-        """
-        Initialize the injector with a list of dependency IDs.
+        """Initialize the injector with a list of dependency IDs.
 
         :param dependencies: Dependency IDs that should be injected.
         :raises TypeError: If any dependency ID is not a string.
@@ -30,6 +31,8 @@ class BaseInjector:
             func: Callable[Concatenate[dict[str, Any], P], T],
     ) -> Callable[P, T]:
         """
+        Injects the specified dependency.
+
         Wraps a function to automatically provide the specified dependencies
         as an argument when it is called. Injected dependencies are passed as
         the first argument in a dictionary.
@@ -54,8 +57,7 @@ class BaseInjector:
 
     @classmethod
     def register(cls, dependency_id: str, dependency: Any) -> None:
-        """
-        Register a dependency with a unique string ID.
+        """Register a dependency with a unique string ID.
 
         :param dependency_id: The unique identifier for the dependency.
         :param dependency: The actual dependency (e.g., object, class, function).
@@ -71,8 +73,7 @@ class BaseInjector:
 
     @classmethod
     def unregister(cls, dependency_id: str) -> None:
-        """
-        Unregister a dependency by its unique ID.
+        """Unregister a dependency by its unique ID.
 
         :param dependency_id: The unique identifier of the dependency to remove.
         :raises DependencyNotRegisteredError: If the dependency ID is not registered.
