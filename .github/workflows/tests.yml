@@ -47,5 +47,4 @@ jobs:
           python-version-file: "pyproject.toml"
       - name: Run Tests
         run: |
-          uv sync --group typing
-          python -m mypy src/*
+          uvx --from 'mypy[faster-cache,reports]' mypy src
