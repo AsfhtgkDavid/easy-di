@@ -1,3 +1,11 @@
+"""
+A dependency injector that supports grouping dependencies into named collections.
+
+Copyright (c) 2025 David Lishchyshen
+
+See the README file for information on usage and redistribution.
+"""
+
 from __future__ import annotations
 
 import functools
@@ -19,11 +27,23 @@ FuncForGroupDeps: TypeAlias = Callable[
 
 
 class GroupInjector:
+    """
+    A dependency injector that supports grouping dependencies into named collections.
+    """
+
     _registered_dependencies: ClassVar[dict[str, dict[str, Any]]] = {}
     def __init__(self, *dependencies: str) -> None:
+        """
+        Initialize the injector as a decorator with a list of required dependencies.
+        Dependency IDs must include group names.
+
+        :param dependencies: Dependency IDs in the format "group_id.dependency_id".
+        :raises TypeError: If any dependency ID is not a string.
+        :raises DependencyFormatError: If a dependency ID is not correctly formatted.
+        """
         if not all(isinstance(dependency, str) for dependency in dependencies):
             raise TypeError("All dependencies id must be strings")
-        if not all('.' in dependency for dependency in dependencies):
+        if not all("." in dependency for dependency in dependencies):
             raise DependencyFormatError
         self._dependencies = dependencies
 
@@ -31,6 +51,15 @@ class GroupInjector:
     def __call__(self,
                  func: FuncForGroupDeps[P, T],
                  ) -> Callable[P, T]:
+        """
+        Wraps a function to automatically provide the specified dependencies
+        from a registered group.
+        Injected dependencies are passed as the first argument in a dictionary,
+        where keys follow the format "group_id.dependency_id".
+
+        :param func: The function that requires grouped dependency injection.
+        :return: The wrapped function with injected dependencies.
+        """
         @functools.wraps(func)
         def wrapper(*args: P.args, **kwargs: P.kwargs) -> T:
             if "deps" in kwargs:
@@ -52,6 +81,17 @@ class GroupInjector:
             dependency_id: str,
             dependency: Any,
             group_id: Optional[str] = None) -> None:
+        """
+        Register a dependency within a specified group.
+
+        :param dependency_id: The unique identifier for the dependency.
+        :param dependency: The actual dependency (e.g., object, class, function).
+        :param group_id: The group where the dependency should be registered.
+        :raises TypeError: If dependency_id or group_id is not a string.
+        :raises DependencyGroupNotRegisteredError: If the specified group is not registered.
+        :raises DependencyRegisteredError: If the dependency ID is already registered in the group.
+        :raises DependencyFormatError: If the dependency ID is not contain group and group_id is not specified.
+        """
         dependency_id, group_id = cls._parse_dependency_and_group(
             dependency_id,
             group_id)
@@ -66,6 +106,16 @@ class GroupInjector:
             cls,
             dependency_id: str,
             group_id: Optional[str] =None) -> None:
+        """
+        Unregister a specific dependency from a group.
+
+        :param dependency_id: The unique identifier of the dependency to remove.
+        :param group_id: The group from which the dependency should be removed.
+        :raises TypeError: If dependency_id or group_id is not a string.
+        :raises DependencyGroupNotRegisteredError: If the specified group is not registered.
+        :raises DependencyNotRegisteredError: If the dependency is not found in the group.
+        :raises DependencyFormatError: If the dependency ID is not contain group and group_id is not specified.
+        """
         dependency_id, group_id = cls._parse_dependency_and_group(
             dependency_id,
             group_id)
@@ -80,11 +130,20 @@ class GroupInjector:
             cls,
             group_id: str,
             **dependencies: Any) -> None:
+        """
+        Register a new dependency group with optional initial dependencies.
+
+        :param group_id: The unique identifier for the group.
+        :param dependencies: Key-value pairs representing dependency IDs and their values.
+        :raises TypeError: If the group or dependency ID is not a string.
+        :raises ValueError: If the group ID contains dot.
+        :raises DependencyGroupRegisteredError: If the group ID is already registered.
+        """
         if not isinstance(group_id, str):
             raise TypeError("Dependency group ID must be a string")
         if group_id in cls._registered_dependencies:
             raise DependencyGroupRegisteredError(group_id)
-        if '.' in group_id:
+        if "." in group_id:
             raise ValueError("Dependency group ID cannot contain dot")
         cls._registered_dependencies[group_id] = {}
         for dependency in dependencies:
@@ -94,6 +153,12 @@ class GroupInjector:
 
     @classmethod
     def unregister_dependency_group(cls, group_id: str) -> None:
+        """
+        Unregister an entire dependency group.
+
+        :param group_id: The unique identifier of the group to remove.
+        :raises DependencyGroupNotRegisteredError: If the group ID is not registered.
+        """
         if group_id not in cls._registered_dependencies:
             raise DependencyGroupNotRegisteredError(group_id)
         if len(cls._registered_dependencies[group_id]) != 0:
