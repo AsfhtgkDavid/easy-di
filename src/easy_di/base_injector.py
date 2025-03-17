@@ -1,13 +1,19 @@
-"""
-A simple dependency injector
+"""A simple dependency injector.
 
 Copyright (c) 2025 David Lishchyshen
 
 See the README file for information on usage and redistribution.
 """
+from __future__ import annotations
 
 import functools
-from typing import Any, Callable, ClassVar, Concatenate, ParamSpec, TypeVar
+import sys
+from typing import Any, Callable, ClassVar, Dict, TypeVar
+
+if sys.version_info >= (3, 10):
+    from typing import Concatenate, ParamSpec
+else:
+    from typing_extensions import ParamSpec, Concatenate
 
 from .exceptions import (DependencyNotRegisteredError,
                          DependencyRegisteredError, OverwritingArgumentError)
@@ -17,13 +23,13 @@ T = TypeVar("T")
 
 
 class BaseInjector:
-    """A simple dependency injector
+    """A simple dependency injector.
 
     Allows registering and injecting dependencies
     dynamically into functions using decorators.
     """
 
-    _registered_dependencies: ClassVar[dict[str, Any]] = {}
+    _registered_dependencies: ClassVar[Dict[str, Any]] = {}
     def __init__(self, *dependencies: str) -> None:
         """Initialize the injector with a list of dependency IDs.
 
@@ -36,10 +42,9 @@ class BaseInjector:
 
     def __call__(
             self,
-            func: Callable[Concatenate[dict[str, Any], P], T],
+            func: Callable[Concatenate[Dict[str, Any], P], T],
     ) -> Callable[P, T]:
-        """
-        Injects the specified dependency.
+        """Injects the specified dependency.
 
         Wraps a function to automatically provide the specified dependencies
         as an argument when it is called. Injected dependencies are passed as

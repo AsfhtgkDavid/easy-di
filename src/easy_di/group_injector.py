@@ -1,5 +1,4 @@
-"""
-A dependency injector that supports grouping dependencies into named collections.
+"""A dependency injector that supports grouping dependencies into named collections.
 
 Copyright (c) 2025 David Lishchyshen
 
@@ -9,8 +8,14 @@ See the README file for information on usage and redistribution.
 from __future__ import annotations
 
 import functools
-from typing import (Any, Callable, ClassVar, Concatenate, Optional, ParamSpec,
-                    TypeAlias, TypeVar, Union)
+import sys
+from typing import Any, Callable, ClassVar, Dict, Optional, TypeVar, Union
+
+if sys.version_info >= (3, 10):
+    from typing import Concatenate, ParamSpec
+else:
+    from typing_extensions import ParamSpec, Concatenate
+
 from warnings import warn
 
 from .exceptions import (DependencyFormatError,
@@ -21,20 +26,17 @@ from .exceptions import (DependencyFormatError,
 
 P = ParamSpec("P")
 T = TypeVar("T")
-FuncForGroupDeps: TypeAlias = Callable[
-    Concatenate[dict[str, Union[dict[str, Any], Any]], P],
+FuncForGroupDeps = Callable[
+    Concatenate[Dict[str, Union[Dict[str, Any], Any]], P],
     T]
 
 
 class GroupInjector:
-    """
-    A dependency injector that supports grouping dependencies into named collections.
-    """
+    """A dependency injector that supports grouping dependencies into named collections."""
 
-    _registered_dependencies: ClassVar[dict[str, dict[str, Any]]] = {}
+    _registered_dependencies: ClassVar[Dict[str, Dict[str, Any]]] = {}
     def __init__(self, *dependencies: str) -> None:
-        """
-        Initialize the injector as a decorator with a list of required dependencies.
+        """Initialize the injector as a decorator with a list of required dependencies.
         Dependency IDs must include group names.
 
         :param dependencies: Dependency IDs in the format "group_id.dependency_id".
@@ -51,8 +53,7 @@ class GroupInjector:
     def __call__(self,
                  func: FuncForGroupDeps[P, T],
                  ) -> Callable[P, T]:
-        """
-        Wraps a function to automatically provide the specified dependencies
+        """Wraps a function to automatically provide the specified dependencies
         from a registered group.
         Injected dependencies are passed as the first argument in a dictionary,
         where keys follow the format "group_id.dependency_id".
@@ -81,8 +82,7 @@ class GroupInjector:
             dependency_id: str,
             dependency: Any,
             group_id: Optional[str] = None) -> None:
-        """
-        Register a dependency within a specified group.
+        """Register a dependency within a specified group.
 
         :param dependency_id: The unique identifier for the dependency.
         :param dependency: The actual dependency (e.g., object, class, function).
@@ -106,8 +106,7 @@ class GroupInjector:
             cls,
             dependency_id: str,
             group_id: Optional[str] =None) -> None:
-        """
-        Unregister a specific dependency from a group.
+        """Unregister a specific dependency from a group.
 
         :param dependency_id: The unique identifier of the dependency to remove.
         :param group_id: The group from which the dependency should be removed.
@@ -130,8 +129,7 @@ class GroupInjector:
             cls,
             group_id: str,
             **dependencies: Any) -> None:
-        """
-        Register a new dependency group with optional initial dependencies.
+        """Register a new dependency group with optional initial dependencies.
 
         :param group_id: The unique identifier for the group.
         :param dependencies: Key-value pairs representing dependency IDs and their values.
@@ -153,8 +151,7 @@ class GroupInjector:
 
     @classmethod
     def unregister_dependency_group(cls, group_id: str) -> None:
-        """
-        Unregister an entire dependency group.
+        """Unregister an entire dependency group.
 
         :param group_id: The unique identifier of the group to remove.
         :raises DependencyGroupNotRegisteredError: If the group ID is not registered.

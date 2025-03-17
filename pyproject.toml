@@ -1,25 +1,54 @@
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "easy-di"
 version = "1.0.0"
-description = "Easy library for dependency injection"
-requires-python = ">=3.9"
-dependencies = []
+description = "Library for easy dependency injection"
+readme = "README.md"
+authors = [{ name = "David Lishchyshen", email = "microdaika1@gmail.com" }]
+keywords = ["easy", "lightweight", "di", "dependency", "injection", "easy-di"]
+requires-python = ">=3.6"
+dependencies = [
+    "typing-extensions>=4.0.0; python_full_version < '3.10'"
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Software Development :: Testing",
+    "Typing :: Typed"
+]
+
+[project.urls]
+Homepage = "https://github.com/AsfhtgkDavid/easy-di"
 
 [dependency-groups]
-dev = [
-    "coverage>=7.6.12",
-]
+dev = []
 lint = [
-    "isort>=6.0.1",
-    "ruff>=0.11.0",
+    "isort>=5.8.0",
+    "ruff",
 ]
 typing = [
-    "mypy>=1.15.0",
+    "mypy>=0.971",
 ]
 
 [tool.ruff]
 line-length = 79
-target-version = "py39"
+target-version = "py37"  # Python 3.6 is not support by ruff
 indent-width = 4
 
 [tool.ruff.lint]
@@ -33,7 +62,9 @@ ignore = [
     "I",
     "COM812",
     "TRY003",
-    "UP007"
+    "UP006",
+    "UP007",
+    "UP035"
 ]
 
 [tool.mypy]
