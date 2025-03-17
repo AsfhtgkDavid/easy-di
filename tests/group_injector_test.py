@@ -79,10 +79,14 @@ class GroupInjectorTest(unittest.TestCase):
         easy_di.GroupInjector.unregister_dependency_group('test')
 
     def test_inject_and_pass_deps(self) -> None:
-        func = easy_di.GroupInjector('test')(mock_func)
+        func = easy_di.GroupInjector('test.test')(mock_func)
         x = random.randint(0, 10)
         with self.assertRaises(OverwritingArgumentError):
             func(x, deps=x)  # type: ignore
+
+    def test_inject_with_incorrect_dependency_format(self) -> None:
+        with self.assertRaises(DependencyFormatError):
+            easy_di.GroupInjector('test')
 
     def test_decorate_when_dependency_not_registered(self) -> None:
         func = easy_di.GroupInjector('test.test')(mock_func)
