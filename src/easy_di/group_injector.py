@@ -23,6 +23,8 @@ class GroupInjector:
     def __init__(self, *dependencies: str) -> None:
         if not all(isinstance(dependency, str) for dependency in dependencies):
             raise TypeError("All dependencies id must be strings")
+        if not all('.' in dependency for dependency in dependencies):
+            raise DependencyFormatError
         self._dependencies = dependencies
 
 
