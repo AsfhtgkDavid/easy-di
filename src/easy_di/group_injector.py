@@ -69,6 +69,10 @@ class GroupInjector:
                 deps = {}
                 for i in self._dependencies:
                     dependency, group = self._parse_dependency_and_group(i)
+                    if dependency == "*":
+                        for dependency_id, dependency in (
+                                self._registered_dependencies[group].items()):
+                            deps[group+"."+dependency_id] = dependency
                     deps[i] = self._registered_dependencies[group][dependency]
             except KeyError as e:
                 raise DependencyNotRegisteredError(e.args[0]) from e
