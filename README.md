@@ -11,6 +11,7 @@ Easy-DI is a simple yet powerful Python library for dependency injection. It hel
 - **Support for various dependency types**: functions, classes, objects, and more
 - **Strict enforcement of string-based dependency IDs**
 - **Grouped dependency injection** for better organization
+- **Supports wildcard injection (`group.*`) to inject all dependencies from a group as separate elements**
 - **Full compatibility with Python's type hints** for type safety
 
 ## Installation 💻📦⚙️
@@ -73,6 +74,24 @@ def log_message(deps, message):
     return f"{deps['services.logger'](message)} | Debug: {deps['services.config']['debug']}"
 
 print(log_message("An event occurred"))  # Output: "Log: An event occurred | Debug: True"
+```
+
+### Wildcard Group Injection (`group.*`) 🎯✨🔧
+
+You can inject all dependencies from a group using the `group.*` pattern. Each dependency in the group will be added as a separate element in `deps`.
+
+```python
+from easy_di import GroupInjector
+
+# Register a dependency group with multiple dependencies
+GroupInjector.register_dependency_group("config", host="localhost", port=8080, debug=True)
+
+# Inject all elements of the group as separate entries in `deps`
+@GroupInjector("config.*")
+def app_settings(deps):
+    return f"Host: {deps['config.host']}, Port: {deps['config.port']}, Debug: {deps['config.debug']}"
+
+print(app_settings())  # Output: "Host: localhost, Port: 8080, Debug: True"
 ```
 
 ## API Reference 📚🔍🛠️
