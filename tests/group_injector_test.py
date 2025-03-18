@@ -78,6 +78,16 @@ class GroupInjectorTest(unittest.TestCase):
         self.assertTupleEqual((x, dep), func(x))
         easy_di.GroupInjector.unregister_dependency_group("test")
 
+    def test_inject_all_group(self) -> None:
+        func = easy_di.GroupInjector("test.*")(lambda deps: deps)
+        dep1 = random.randint(0, 10)
+        dep2 = random.randint(0, 10)
+        easy_di.GroupInjector.register_dependency_group("test",
+                                                        dep1=dep1,
+                                                        dep2=dep2)
+        self.assertDictEqual({"test.dep1": dep1, "test.dep2": dep2}, func())
+        easy_di.GroupInjector.unregister_dependency_group("test")
+
     def test_inject_and_pass_deps(self) -> None:
         func = easy_di.GroupInjector("test.test")(mock_func)
         x = random.randint(0, 10)
