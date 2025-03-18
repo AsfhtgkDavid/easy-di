@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import functools
 import sys
-from typing import Any, Callable, ClassVar, Dict, Optional, TypeVar, Union
+from typing import Any, Callable, ClassVar, Dict, Optional, TypeVar
 
 if sys.version_info >= (3, 10):
     from typing import Concatenate, ParamSpec
@@ -27,7 +27,7 @@ from .exceptions import (DependencyFormatError,
 P = ParamSpec("P")
 T = TypeVar("T")
 FuncForGroupDeps = Callable[
-    Concatenate[Dict[str, Union[Dict[str, Any], Any]], P],
+    Concatenate[Dict[str, Any], P],
     T]
 
 
@@ -73,6 +73,7 @@ class GroupInjector:
                         for dependency_id, dependency in (
                                 self._registered_dependencies[group].items()):
                             deps[group+"."+dependency_id] = dependency
+                        continue
                     deps[i] = self._registered_dependencies[group][dependency]
             except KeyError as e:
                 raise DependencyNotRegisteredError(e.args[0]) from e
