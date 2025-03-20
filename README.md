@@ -16,25 +16,27 @@ Easy-DI is a simple yet powerful Python library for dependency injection. It hel
 
 ## Installation 💻📦⚙️
 
+🚨 Note: Currently, Easy-DI is not available on PyPI due to temporary issues. Please install it directly from GitHub. 🚨
+
 Easy-DI has no external dependencies. You can install it using your preferred package manager:
 
-### Using pip 🐍📌✅
+### Using pip (via GitHub) 🐍📌✅
 ```sh
-pip install easy-di
+pip install git+https://github.com/AsfhtgkDavid/easy-di.git
 ```
 
-### Using Poetry 🎼📌✅
+### Using Poetry (via GitHub) 🎼📌✅
 ```sh
-poetry add easy-di
+poetry add git+https://github.com/AsfhtgkDavid/easy-di.git
 ```
 
-### Using uv ⚡📌✅
+### Using uv (via GitHub) ⚡📌✅
 ```sh
-uv pip install easy-di
+uv pip install git+https://github.com/AsfhtgkDavid/easy-di.git
 ```
 or
 ```sh
-uv add easy-di
+uv add git+https://github.com/AsfhtgkDavid/easy-di.git
 ```
 
 ## Usage Guide 📝🚀🔍
