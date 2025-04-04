@@ -78,12 +78,12 @@ class BaseInjector:
         :raises TypeError: If the dependency ID is not a string.
         :raises DependencyRegisteredError: If the dependency ID is already registered.
         """
+        if dependency_id == "*":
+            raise ValueError("Dependency ID cannot be '*'")
         if not isinstance(dependency_id, str):
             raise TypeError("Dependency ID must be a string")
         if dependency_id in cls._registered_dependencies:
             raise DependencyRegisteredError(dependency_id)
-        if dependency_id == "*":
-            raise ValueError("Dependency ID cannot be '*'")
         cls._registered_dependencies[dependency_id] = dependency
 
 
