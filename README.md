@@ -12,6 +12,7 @@ Easy-DI is a simple yet powerful Python library for dependency injection. It hel
 - **Strict enforcement of string-based dependency IDs**
 - **Grouped dependency injection** for better organization
 - **Supports wildcard injection (`group.*`) to inject all dependencies from a group as separate elements**
+- **Supports bulk unregistration using wildcard patterns (e.g., `*`, `group.*`)**
 - **Full compatibility with Python's type hints** for type safety
 
 ## Installation 💻📦⚙️
@@ -96,6 +97,18 @@ def app_settings(deps):
 print(app_settings())  # Output: "Host: localhost, Port: 8080, Debug: True"
 ```
 
+### Bulk Unregistration with Wildcards ❌🧹🚫
+
+You can unregister multiple dependencies at once using wildcard patterns:
+
+```python
+from easy_di import BaseInjector, GroupInjector
+
+BaseInjector.unregister("*")  # Unregister all dependencies in BaseInjector
+GroupInjector.unregister_dependency("test.*")  # Unregister all dependencies in group "test"
+GroupInjector.unregister_dependency_group("*")  # Unregister all dependency groups and their dependencies
+```
+
 ## API Reference 📚🔍🛠️
 
 ### `BaseInjector` ⚙️🔄📌
@@ -107,7 +120,7 @@ Decorator that injects a registered dependency into a function.
 Registers a dependency using a string ID.
 
 #### `BaseInjector.unregister(dependency_id: str) -> None`
-Unregisters a dependency by its ID.
+Unregisters a dependency by its ID. Supports `"*"` to unregister all.
 
 ---
 
@@ -123,10 +136,10 @@ Registers a dependency group containing multiple dependencies.
 Registers a dependency inside an existing group.
 
 #### `GroupInjector.unregister_dependency(dependency_id: str, group_id: Optional[str] = None) -> None`
-Unregisters a specific dependency from a group.
+Unregisters a specific dependency from a group. Supports wildcards (e.g., `"group.*"`).
 
 #### `GroupInjector.unregister_dependency_group(group_id: str) -> None`
-Unregisters an entire dependency group.
+Unregisters an entire dependency group. Supports `"*"` to unregister all groups.
 
 ## Development & Configuration 🛠️💡🔧
 

@@ -119,10 +119,14 @@ class GroupInjectorTest(unittest.TestCase):
     def test_register_dependency_incorrect_id(self) -> None:
         with self.assertRaises(TypeError):
             easy_di.GroupInjector.register_dependency(123, "test")  # type: ignore
+        with self.assertRaises(ValueError):
+            easy_di.GroupInjector.register_dependency("test.*", "test")
 
     def test_register_dependency_group_incorrect_id(self) -> None:
         with self.assertRaises(TypeError):
             easy_di.GroupInjector.register_dependency_group(123)  # type: ignore
+        with self.assertRaises(ValueError):
+            easy_di.GroupInjector.register_dependency_group("*")
 
     def test_register_registered_dependency_group(self) -> None:
         easy_di.GroupInjector.register_dependency_group("test")
@@ -157,6 +161,25 @@ class GroupInjectorTest(unittest.TestCase):
         with self.assertRaises(DependencyGroupNotRegisteredError) as e:
             easy_di.GroupInjector.unregister_dependency_group("test")
         self.assertEqual(e.exception.group_id, "test")
+
+    def test_unregister_all_dependencies_in_group(self) -> None:
+        easy_di.GroupInjector.register_dependency_group("test")
+        easy_di.GroupInjector.register_dependency("test.test", "test")
+        easy_di.GroupInjector.register_dependency("test.test2", "test2")
+        with self.assertWarns(Warning):
+            easy_di.GroupInjector.unregister_dependency("test.*")
+        self.assertDictEqual(easy_di.GroupInjector._registered_dependencies, {"test": {}})
+
+    def test_unregister_all_dependency_groups(self) -> None:
+        easy_di.GroupInjector.register_dependency_group("test")
+        easy_di.GroupInjector.register_dependency("test.test", "test")
+        easy_di.GroupInjector.register_dependency("test.test2", "test2")
+        easy_di.GroupInjector.register_dependency_group("test2")
+        easy_di.GroupInjector.register_dependency("test2.test", "test")
+        easy_di.GroupInjector.register_dependency("test2.test2", "test2")
+        with self.assertWarns(Warning):
+            easy_di.GroupInjector.unregister_dependency_group("*")
+        self.assertDictEqual(easy_di.GroupInjector._registered_dependencies, {})
 
 
 if __name__ == "__main__":
