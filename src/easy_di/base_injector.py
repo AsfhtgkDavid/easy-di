@@ -76,6 +76,7 @@ class BaseInjector:
         :param dependency_id: The unique identifier for the dependency.
         :param dependency: The actual dependency (e.g., object, class, function).
         :raises TypeError: If the dependency ID is not a string.
+        :raises ValueError: If the dependency ID is '*'.
         :raises DependencyRegisteredError: If the dependency ID is already registered.
         """
         if dependency_id == "*":

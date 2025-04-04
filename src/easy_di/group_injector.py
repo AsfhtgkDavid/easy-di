@@ -93,6 +93,7 @@ class GroupInjector:
         :param dependency: The actual dependency (e.g., object, class, function).
         :param group_id: The group where the dependency should be registered.
         :raises TypeError: If dependency_id or group_id is not a string.
+        :raises ValueError: If the dependency ID is '*'.
         :raises DependencyGroupNotRegisteredError: If the specified group is not registered.
         :raises DependencyRegisteredError: If the dependency ID is already registered in the group.
         :raises DependencyFormatError: If the dependency ID is not contain group and group_id is not specified.
@@ -145,7 +146,7 @@ class GroupInjector:
         :param group_id: The unique identifier for the group.
         :param dependencies: Key-value pairs representing dependency IDs and their values.
         :raises TypeError: If the group or dependency ID is not a string.
-        :raises ValueError: If the group ID contains dot.
+        :raises ValueError: If the group ID contains dot or dependency or group ID is '*'.
         :raises DependencyGroupRegisteredError: If the group ID is already registered.
         """
         if not isinstance(group_id, str):
