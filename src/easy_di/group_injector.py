@@ -125,12 +125,12 @@ class GroupInjector:
         dependency_id, group_id = cls._parse_dependency_and_group(
             dependency_id,
             group_id)
-        if dependency_id == "*":
-            cls._registered_dependencies.clear()
-            warn("Deleted all registered dependencies.")
-            return
         if group_id not in cls._registered_dependencies:
             raise DependencyGroupNotRegisteredError(group_id)
+        if dependency_id == "*":
+            cls._registered_dependencies[group_id].clear()
+            warn("Deleted all registered dependencies.")
+            return
         if dependency_id not in cls._registered_dependencies[group_id]:
             raise DependencyNotRegisteredError(dependency_id)
         cls._registered_dependencies[group_id].pop(dependency_id)
