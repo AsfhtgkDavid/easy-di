@@ -54,13 +54,22 @@ class BaseInjectorTest(unittest.TestCase):
         self.assertEqual(e.exception.dependency_id, "test")
 
     def test_register_incorrect_dependency_id(self) -> None:
-        with self.assertRaises(TypeError) as e:
+        with self.assertRaises(TypeError):
             easy_di.BaseInjector.register(123, "test")  # type: ignore
+        with self.assertRaises(ValueError):
+            easy_di.BaseInjector.register("*", "test")
 
     def test_unregister_when_dependency_not_registered(self) -> None:
         with self.assertRaises(DependencyNotRegisteredError) as e:
             easy_di.BaseInjector.unregister("test")
         self.assertEqual(e.exception.dependency_id, "test")
+
+    def test_unregister_all(self) -> None:
+        easy_di.BaseInjector.register("test", "test")
+        easy_di.BaseInjector.register("test2", "test2")
+        with self.assertWarns(Warning):
+            easy_di.BaseInjector.unregister("*")
+        self.assertDictEqual(easy_di.BaseInjector._registered_dependencies, {})
 
 
 if __name__ == "__main__":
