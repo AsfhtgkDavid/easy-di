@@ -9,6 +9,7 @@ from __future__ import annotations
 import functools
 import sys
 from typing import Any, Callable, ClassVar, Dict, TypeVar
+from warnings import warn
 
 if sys.version_info >= (3, 10):
     from typing import Concatenate, ParamSpec
@@ -81,6 +82,8 @@ class BaseInjector:
             raise TypeError("Dependency ID must be a string")
         if dependency_id in cls._registered_dependencies:
             raise DependencyRegisteredError(dependency_id)
+        if dependency_id == "*":
+            raise ValueError("Dependency ID cannot be '*'")
         cls._registered_dependencies[dependency_id] = dependency
 
 
@@ -91,6 +94,10 @@ class BaseInjector:
         :param dependency_id: The unique identifier of the dependency to remove.
         :raises DependencyNotRegisteredError: If the dependency ID is not registered.
         """
+        if dependency_id == "*":
+            cls._registered_dependencies.clear()
+            warn("Deleted all registered dependencies.")
+            return
         if dependency_id not in cls._registered_dependencies:
             raise DependencyNotRegisteredError(dependency_id)
         cls._registered_dependencies.pop(dependency_id)

@@ -104,6 +104,8 @@ class GroupInjector:
             raise DependencyGroupNotRegisteredError(group_id)
         if dependency_id in cls._registered_dependencies[group_id]:
             raise DependencyRegisteredError(dependency_id)
+        if dependency_id == "*":
+            raise ValueError("Dependency ID cannot be '*'")
         cls._registered_dependencies[group_id][dependency_id] = dependency
 
     @classmethod
@@ -123,6 +125,10 @@ class GroupInjector:
         dependency_id, group_id = cls._parse_dependency_and_group(
             dependency_id,
             group_id)
+        if dependency_id == "*":
+            cls._registered_dependencies.clear()
+            warn("Deleted all registered dependencies.")
+            return
         if group_id not in cls._registered_dependencies:
             raise DependencyGroupNotRegisteredError(group_id)
         if dependency_id not in cls._registered_dependencies[group_id]:
@@ -148,6 +154,8 @@ class GroupInjector:
             raise DependencyGroupRegisteredError(group_id)
         if "." in group_id:
             raise ValueError("Dependency group ID cannot contain dot")
+        if group_id == "*":
+            raise ValueError("Dependency group ID cannot be '*'")
         cls._registered_dependencies[group_id] = {}
         for dependency in dependencies:
             cls.register_dependency(dependency,
@@ -161,6 +169,10 @@ class GroupInjector:
         :param group_id: The unique identifier of the group to remove.
         :raises DependencyGroupNotRegisteredError: If the group ID is not registered.
         """
+        if group_id == "*":
+            cls._registered_dependencies.clear()
+            warn("Deleted all registered dependency groups.")
+            return
         if group_id not in cls._registered_dependencies:
             raise DependencyGroupNotRegisteredError(group_id)
         if len(cls._registered_dependencies[group_id]) != 0:
