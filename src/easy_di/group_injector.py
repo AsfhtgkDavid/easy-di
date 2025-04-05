@@ -107,10 +107,10 @@ class GroupInjector:
         if dependency_id == "*":
             raise ValueError("Dependency ID cannot be '*'")
         if group_id not in cls._registered_dependencies:
-            if if_group_not_exists == "error":
-                raise DependencyGroupNotRegisteredError(group_id)
             if if_group_not_exists == "create":
                 cls.register_dependency_group(group_id)
+            else:
+                raise DependencyGroupNotRegisteredError(group_id)
         if dependency_id in cls._registered_dependencies[group_id]:
             raise DependencyRegisteredError(dependency_id)
         cls._registered_dependencies[group_id][dependency_id] = dependency
