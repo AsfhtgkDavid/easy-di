@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import functools
 import sys
-from typing import Any, Callable, ClassVar, Dict, Optional, TypeVar
+from typing import Any, Callable, ClassVar, Dict, Optional, TypeVar, Literal
 
 if sys.version_info >= (3, 10):
     from typing import Concatenate, ParamSpec
@@ -86,12 +86,15 @@ class GroupInjector:
             cls,
             dependency_id: str,
             dependency: Any,
-            group_id: Optional[str] = None) -> None:
+            group_id: Optional[str] = None,
+            *,
+            if_group_not_exists: Literal["error", "create"] = "error") -> None:
         """Register a dependency within a specified group.
 
         :param dependency_id: The unique identifier for the dependency.
         :param dependency: The actual dependency (e.g., object, class, function).
         :param group_id: The group where the dependency should be registered.
+        :param if_group_not_exists: What to do when a dependency group is not registered.
         :raises TypeError: If dependency_id or group_id is not a string.
         :raises ValueError: If the dependency ID is '*'.
         :raises DependencyGroupNotRegisteredError: If the specified group is not registered.
@@ -104,7 +107,10 @@ class GroupInjector:
         if dependency_id == "*":
             raise ValueError("Dependency ID cannot be '*'")
         if group_id not in cls._registered_dependencies:
-            raise DependencyGroupNotRegisteredError(group_id)
+            if if_group_not_exists == "create":
+                cls.register_dependency_group(group_id)
+            else:
+                raise DependencyGroupNotRegisteredError(group_id)
         if dependency_id in cls._registered_dependencies[group_id]:
             raise DependencyRegisteredError(dependency_id)
         cls._registered_dependencies[group_id][dependency_id] = dependency

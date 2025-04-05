@@ -132,8 +132,10 @@ Decorator that injects dependencies from a registered group.
 #### `GroupInjector.register_dependency_group(group_id: str, **dependencies: Any) -> None`
 Registers a dependency group containing multiple dependencies.
 
-#### `GroupInjector.register_dependency(dependency_id: str, dependency: Any, group_id: Optional[str] = None) -> None`
+#### `GroupInjector.register_dependency(dependency_id: str, dependency: Any, group_id: Optional[str] = None, *, if_group_not_exists: Literal["error", "create"] = "error") -> None`
 Registers a dependency inside an existing group.
+
+if_group_not_exists: What to do when the group is not registered. Use "error" to raise an exception or "create" to automatically create the group.
 
 #### `GroupInjector.unregister_dependency(dependency_id: str, group_id: Optional[str] = None) -> None`
 Unregisters a specific dependency from a group. Supports wildcards (e.g., `"group.*"`).
