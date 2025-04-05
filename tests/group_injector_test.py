@@ -181,6 +181,10 @@ class GroupInjectorTest(unittest.TestCase):
             easy_di.GroupInjector.unregister_dependency_group("*")
         self.assertDictEqual(easy_di.GroupInjector._registered_dependencies, {})
 
+    def test_autocreate_group(self) -> None:
+        easy_di.GroupInjector.register_dependency("test.test", "test", if_group_not_exists="create")
+        self.assertDictEqual(easy_di.GroupInjector._registered_dependencies, {"test": {"test": "test"}})
+
 
 if __name__ == "__main__":
     unittest.main()
