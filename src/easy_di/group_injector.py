@@ -94,6 +94,7 @@ class GroupInjector:
         :param dependency_id: The unique identifier for the dependency.
         :param dependency: The actual dependency (e.g., object, class, function).
         :param group_id: The group where the dependency should be registered.
+        :param if_group_not_exists: What to do when a dependency group is not registered.
         :raises TypeError: If dependency_id or group_id is not a string.
         :raises ValueError: If the dependency ID is '*'.
         :raises DependencyGroupNotRegisteredError: If the specified group is not registered.
