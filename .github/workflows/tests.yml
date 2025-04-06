@@ -2,6 +2,10 @@ name: Python tests
 
 on: [pull_request, workflow_dispatch]
 
+permissions:
+  contents: read
+  actions: read
+
 jobs:
   unittests:
     runs-on: ubuntu-latest
