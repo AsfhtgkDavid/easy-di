@@ -63,6 +63,8 @@ def my_function(deps, arg):
 print(my_function("Hello"))  # Output: "Processed: Hello"
 ```
 
+> ✅ In `BaseInjector`, dependencies can be registered **before or after** the function is defined, but **must be registered before the function is first called**.
+
 ### Grouped Dependency Injection 🎯🔗📌
 
 ```python
@@ -78,6 +80,8 @@ def log_message(deps, message):
 
 print(log_message("An event occurred"))  # Output: "Log: An event occurred | Debug: True"
 ```
+
+> ✅ In `GroupInjector`, dependencies can also be registered **before or after** the function definition, but **must be registered before its first invocation**. When registering a dependency into a group, ensure that the group is registered **first** (unless you set `if_group_not_exists="create"`).
 
 ### Wildcard Group Injection (`group.*`) 🎯✨🔧
 
@@ -135,7 +139,7 @@ Registers a dependency group containing multiple dependencies.
 #### `GroupInjector.register_dependency(dependency_id: str, dependency: Any, group_id: Optional[str] = None, *, if_group_not_exists: Literal["error", "create"] = "error") -> None`
 Registers a dependency inside an existing group.
 
-if_group_not_exists: What to do when the group is not registered. Use "error" to raise an exception or "create" to automatically create the group.
+`if_group_not_exists`: What to do when the group is not registered. Use "error" to raise an exception or "create" to automatically create the group.
 
 #### `GroupInjector.unregister_dependency(dependency_id: str, group_id: Optional[str] = None) -> None`
 Unregisters a specific dependency from a group. Supports wildcards (e.g., `"group.*"`).
