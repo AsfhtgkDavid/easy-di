@@ -78,7 +78,10 @@ class GroupInjector:
                     if dependency == "*":
                         for dependency_id, dependency in (
                                 self._registered_dependencies[group].items()):
-                            deps[group+"."+dependency_id] = dependency
+                            if self._group_deps:
+                                deps[group][dependency_id] = dependency
+                            else:
+                                deps[group+"."+dependency_id] = dependency
                         continue
                     if self._group_deps:
                         deps[group] = self._registered_dependencies[group][dependency]
