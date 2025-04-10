@@ -84,7 +84,7 @@ class GroupInjector:
                                 deps[group+"."+dependency_id] = dependency
                         continue
                     if self._group_deps:
-                        deps[group] = self._registered_dependencies[group][dependency]
+                        deps[group][dependency] = self._registered_dependencies[group][dependency]
                     else:
                         deps[i] = self._registered_dependencies[group][dependency]
             except KeyError as e:
