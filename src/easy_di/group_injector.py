@@ -40,6 +40,7 @@ class GroupInjector:
         Dependency IDs must include group names.
 
         :param dependencies: Dependency IDs in the format "group_id.dependency_id".
+        :param group_deps: If true, group the dependencies into named collections in format {group_id: {dependency_id: dependency}.
         :raises TypeError: If any dependency ID is not a string.
         :raises DependencyFormatError: If a dependency ID is not correctly formatted.
         """
