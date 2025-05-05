@@ -35,11 +35,12 @@ class GroupInjector:
     """A dependency injector that supports grouping dependencies into named collections."""
 
     _registered_dependencies: ClassVar[Dict[str, Dict[str, Any]]] = {}
-    def __init__(self, *dependencies: str) -> None:
+    def __init__(self, *dependencies: str, group_deps: bool = False) -> None:
         """Initialize the injector as a decorator with a list of required dependencies.
         Dependency IDs must include group names.
 
         :param dependencies: Dependency IDs in the format "group_id.dependency_id".
+        :param group_deps: If true, group the dependencies into named collections in format {group_id: {dependency_id: dependency}.
         :raises TypeError: If any dependency ID is not a string.
         :raises DependencyFormatError: If a dependency ID is not correctly formatted.
         """
@@ -48,6 +49,7 @@ class GroupInjector:
         if not all("." in dependency for dependency in dependencies):
             raise DependencyFormatError
         self._dependencies = dependencies
+        self._group_deps = not not group_deps
 
 
     def __call__(self,
@@ -66,15 +68,26 @@ class GroupInjector:
             if "deps" in kwargs:
                 raise OverwritingArgumentError("deps")
             try:
-                deps = {}
+                deps: dict[str, Any]
+                if self._group_deps:
+                    groups = self._split_to_unique_groups(self._dependencies)
+                    deps = {group: {} for group in groups}
+                else:
+                    deps = {}
                 for i in self._dependencies:
                     dependency, group = self._parse_dependency_and_group(i)
                     if dependency == "*":
                         for dependency_id, dependency in (
                                 self._registered_dependencies[group].items()):
-                            deps[group+"."+dependency_id] = dependency
+                            if self._group_deps:
+                                deps[group][dependency_id] = dependency
+                            else:
+                                deps[group+"."+dependency_id] = dependency
                         continue
-                    deps[i] = self._registered_dependencies[group][dependency]
+                    if self._group_deps:
+                        deps[group][dependency] = self._registered_dependencies[group][dependency]
+                    else:
+                        deps[i] = self._registered_dependencies[group][dependency]
             except KeyError as e:
                 raise DependencyNotRegisteredError(e.args[0]) from e
             return func(deps, *args, **kwargs)
@@ -200,3 +213,8 @@ class GroupInjector:
         elif not isinstance(group_id, str):
             raise TypeError("Dependency group ID must be a string")
         return dependency_id, group_id
+
+    @staticmethod
+    def _split_to_unique_groups(
+            dependencies: tuple[str,...]) -> tuple[str, ...]:
+        return tuple({dependency.split(".", 1)[0] for dependency in dependencies})
